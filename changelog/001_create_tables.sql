@@ -1,0 +1,4 @@
+CREATE TABLE TestTable (
+    Id INT PRIMARY KEY,
+    Name NVARCHAR(50)
+);

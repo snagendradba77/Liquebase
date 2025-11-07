@@ -1,0 +1,3 @@
+ALTER TABLE TestTable
+ADD CreatedDate DATETIME DEFAULT GETDATE();
+
