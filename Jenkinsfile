@@ -5,11 +5,6 @@ pipeline {
         // Path to Liquibase
         LIQUIBASE_HOME = "/opt/liquibase"
         PATH = "${env.LIQUIBASE_HOME}:${env.PATH}"
-
-        // Database connection details
-        DB_URL = "jdbc:sqlserver://localhost.localdomain:1433;databaseName=Naga"
-        DB_USERNAME = "sa"
-        DB_PASSWORD = "Mnbv*7894"
     }
 
     stages {
@@ -25,17 +20,12 @@ pipeline {
                 // Verify Liquibase is available
                 sh 'which liquibase || echo "Liquibase not found in PATH"'
 
-                // Debug what we are running
+                // Debug
                 sh 'echo "Starting Liquibase update..."'
 
-                // Run Liquibase update safely (no backslash continuation issues)
+                // Run Liquibase using the properties file
                 sh """
-                    liquibase \
-                      --changeLogFile="changelog/master.xml" \
-                      --url="${DB_URL}" \
-                      --username="${DB_USERNAME}" \
-                      --password="${DB_PASSWORD}" \
-                      update
+                    liquibase --defaultsFile=liquibase.properties update
                 """
             }
         }
