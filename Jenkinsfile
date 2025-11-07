@@ -2,11 +2,11 @@ pipeline {
     agent any
 
     environment {
-        // Path to liquibase
+        // Path to Liquibase
         LIQUIBASE_HOME = "/opt/liquibase"
         PATH = "${env.LIQUIBASE_HOME}:${env.PATH}"
-        
-        // Database connection (make sure it matches liquibase.properties)
+
+        // Database connection details
         DB_URL = "jdbc:sqlserver://localhost.localdomain:1433;databaseName=Naga"
         DB_USERNAME = "sa"
         DB_PASSWORD = "Mnbv*7894"
@@ -22,13 +22,20 @@ pipeline {
 
         stage('Liquibase Update') {
             steps {
-                // Run Liquibase update
+                // Verify Liquibase is available
+                sh 'which liquibase || echo "Liquibase not found in PATH"'
+
+                // Debug what we are running
+                sh 'echo "Starting Liquibase update..."'
+
+                // Run Liquibase update safely (no backslash continuation issues)
                 sh """
-                liquibase --changeLogFile=changelog/master.xml \
-                          --url=${DB_URL} \
-                          --username=${DB_USERNAME} \
-                          --password=${DB_PASSWORD} \
-                          update
+                    liquibase \
+                      --changeLogFile="changelog/master.xml" \
+                      --url="${DB_URL}" \
+                      --username="${DB_USERNAME}" \
+                      --password="${DB_PASSWORD}" \
+                      update
                 """
             }
         }
@@ -36,10 +43,10 @@ pipeline {
 
     post {
         success {
-            echo 'Liquibase update executed successfully!'
+            echo '✅ Liquibase update executed successfully!'
         }
         failure {
-            echo 'Liquibase update failed!'
+            echo '❌ Liquibase update failed!'
         }
     }
 }
